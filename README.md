@@ -1,61 +1,152 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel Prices API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Это Laravel приложение, предоставляющее RESTful API эндпоинт для получения списка продуктов с ценами, поддерживающее конверсию валют (RUB, USD, EUR). Приложение построено на Laravel 11 и следует лучшим практикам для написания чистого, поддерживаемого и тестируемого кода.
 
-## About Laravel
+## Возможности
+- **Эндпоинт**: `GET /api/v1/products` возвращает JSON-список продуктов с полями `id`, `title` и `price`.
+- **Конверсия валют**: Поддерживает `RUB` (по умолчанию), `USD` и `EUR` через параметр запроса `currency`.
+- **Форматирование цен**: Цены форматируются в зависимости от валюты (например, `1 200 ₽`, `$13.33`, `€12.00`).
+- **Лучшие практики**: Используются FormRequest, Resource, паттерн Repository, слой сервисов и конфигурация для курсов валют.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Требования
+- PHP 8.0+
+- Composer
+- Laravel 11
+- PostgreSQL
+- Git
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Установка
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. **Клонирование репозитория**
+   ```bash
+   git clone https://github.com/yokithaiii/sputnik-test-assignment.git
+   cd sputnik-test-assignment
+   ```
 
-## Learning Laravel
+2. **Установка зависимостей**
+   ```bash
+   composer install
+   ```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. **Настройка окружения**
+    - Скопируйте `.env.example` в `.env`:
+      ```bash
+      cp .env.example .env
+      ```
+    - Обновите `.env`, указав параметры базы данных (например, `DB_CONNECTION`, `DB_HOST` и т.д.).
+    - Сгенерируйте ключ приложения:
+      ```bash
+      php artisan key:generate
+      ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+4. **Выполнение миграций и заполнение тестовыми данными**
+   ```bash
+   php artisan migrate --seed
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+5. **Запуск приложения**
+   ```bash
+   php artisan serve
+   ```
+   API будет доступен по адресу `http://localhost:8000`.
 
-## Laravel Sponsors
+## Использование API
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Эндпоинт: `GET /api/products`
 
-### Premium Partners
+- **Описание**: Возвращает список продуктов с ценами в указанной валюте.
+- **Параметр запроса**:
+    - `currency` (необязательный): `RUB`, `USD` или `EUR`. По умолчанию `RUB`.
+- **Ответ**: JSON-массив продуктов с полями `id` (UUID), `title` и `price` (отформатированная цена).
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+#### Примеры запросов
+1. **По умолчанию (RUB)**:
+   ```bash
+   curl http://localhost:8000/api/prices
+   ```
+   **Ответ**:
+   ```json
+   [
+       {
+           "id": "9a2809ed-cdcb-45f8-a6ad-5ff9d7d5234d",
+           "title": "Iphone 16 Pro Max",
+           "price": "190 000₽"
+       },
+       ...
+   ]
+   ```
 
-## Contributing
+2. **USD**:
+   ```bash
+   curl http://localhost:8000/api/prices?currency=USD
+   ```
+   **Ответ**:
+   ```json
+   [
+       {
+            "id": "9a2809ed-cdcb-45f8-a6ad-5ff9d7d5234d",
+            "title": "Iphone 16 Pro Max",
+            "price": "$2,111.11"
+       },
+       ...
+   ]
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. **Недопустимая валюта**:
+   ```bash
+   curl http://localhost:8000/api/prices?currency=INVALID
+   ```
+   **Ответ** (HTTP 422):
+   ```json
+   {
+       "message": "The currency must be one of RUB, USD, or EUR.",
+       "errors": {
+           "currency": ["The currency must be one of RUB, USD, or EUR."]
+       }
+   }
+   ```
 
-## Code of Conduct
+## Структура проекта
+- **Контроллеры**: `app/Http/Controllers/ProductsController.php` - Обработка HTTP-запросов.
+- **Запросы**: `app/Http/Requests/Price/PriceIndexRequest.php` - Валидация параметра `currency`.
+- **Ресурсы**:
+    - `app/Http/Resources/Product/ProductResource.php` - Трансформация данных одного продукта.
+    - `app/Http/Resources/Product/ProductCollection.php` - Обработка коллекции продуктов.
+- **Модели**: `app/Models/Product.php` - Eloquent-модель с UUID и приведением типов для цены.
+- **Репозитории**: `app/Repositories/ProductRepository.php` - Абстракция запросов к БД.
+- **Сервисы**: `app/Services/CurrencyConverter.php` - Логика конверсии и форматирования цен.
+- **Конфигурация**: `config/currencies.php` - Курсы и символы валют.
+- **База данных**:
+    - `database/migrations/2025_06_23_000001_create_products_table.php` - Создание таблицы `products`.
+    - `database/factories/ProductFactory.php` - Генерация тестовых данных для продуктов.
+- **Маршруты**: `routes/api.php` - Определение эндпоинта `/api/prices`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Конфигурация
+Курсы валют и символы определены в `config/currencies.php`:
+```php
+return [
+    'default' => 'RUB',
+    'rates' => [
+        'RUB' => 1,
+        'USD' => 90,
+        'EUR' => 100,
+    ],
+    'symbols' => [
+        'RUB' => '₽',
+        'USD' => '$',
+        'EUR' => '€',
+    ],
+];
+```
+Для изменения курсов или добавления новых валют обновите этот файл.
 
-## Security Vulnerabilities
+## Лучшие практики
+- **Принципы SOLID**: Разделение ответственности с использованием репозиториев и сервисов.
+- **Безопасность типов**: Использование строгих типов и аннотаций.
+- **Валидация**: Надежная проверка входных данных с помощью FormRequest.
+- **Поддерживаемость**: Курсы валют в конфигурации и четкая документация.
+- **Тестируемость**: Репозитории и сервисы легко поддаются мокингу.
+- **Обработка ошибок**: Консистентные JSON-ответы для ошибок.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Автор
+Создано в качестве тестового задания для демонстрации навыков работы с Laravel. Приветствуется обратная связь!
