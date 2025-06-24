@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Product\PriceIndexRequest;
+use App\Http\Requests\Price\PriceIndexRequest;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
 use App\Repositories\ProductRepository;
